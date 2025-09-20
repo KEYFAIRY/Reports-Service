@@ -28,7 +28,7 @@ class GeneratePDFUseCase:
 
     async def execute(self, practice_data: PracticeDataDTO) -> str:
         # Check if audio and video analysis are done
-        if not self.metadata_service.is_audio_analysis_done(practice_data.uid, practice_data.practice_id):
+        if not self.metadata_service.is_video_and_audio_done(practice_data.uid, practice_data.practice_id):
             raise Exception(f"Audio analysis not completed for practice {practice_data.practice_id}")
         
         # 1. Fetch errors
