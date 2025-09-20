@@ -30,3 +30,10 @@ class MetadataPracticeService:
             raise ReportsServiceException(
                 f"Unexpected error saving PDF path: {str(e)}"
             )
+            
+    async def is_video_and_audio_done(self, uid: str, practice_id: int) -> bool:
+        try:
+            return await self.metadata_repo.is_video_and_audio_done(uid, practice_id)
+        except DatabaseConnectionException as db_err:
+            logger.error("Database error while checking video and audio status: %s", db_err)
+            raise

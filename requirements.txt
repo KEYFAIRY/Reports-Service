@@ -9,5 +9,6 @@ pydantic-settings
 cryptography
 aiofiles
 reportlab
+opencv-python-headless
 moviepy
 Pillow
