@@ -32,9 +32,7 @@ async def lifespan():
         raise
 
     # ---------- Kafka ----------
-    loop = asyncio.get_event_loop()
-    consumer_task = loop.create_task(start_kafka_consumer())
-
+    consumer_task = asyncio.create_task(start_kafka_consumer())
     yield
 
     # ---------- Shutdown ----------
