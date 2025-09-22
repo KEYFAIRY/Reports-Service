@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, Numeric, String
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, Integer, Numeric, String, ForeignKey
+from sqlalchemy.orm import relationship
 
-Base = declarative_base()
+from app.infrastructure.database.models.student_model import StudentModel
+from app.infrastructure.database.models.base import Base
 
 class PracticeModel(Base):
     __tablename__ = "Practice"
@@ -13,5 +14,7 @@ class PracticeModel(Base):
     num_musical_errors = Column(Numeric, nullable=True)
     duration = Column(Numeric, nullable=True)
     bpm = Column(Integer, nullable=False)
-    id_student = Column(String(128), nullable=False)
+    id_student = Column(String(128), ForeignKey("Student.uid"), nullable=False)
     id_scale = Column(Integer, nullable=False)
+
+    student = relationship("StudentModel", back_populates="practices")

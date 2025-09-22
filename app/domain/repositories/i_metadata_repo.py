@@ -8,6 +8,6 @@ class IMetadataRepo(ABC):
         pass
     
     @abstractmethod
-    async def is_video_and_audio_done(self, uid: str, practice_id: int) -> bool:
+    async def is_video_and_audio_done(self, uid: str, practice_id: int, pdf_path: str) -> bool:
         """Checks if both video and audio processing are done for a specific practice ID."""
         pass
