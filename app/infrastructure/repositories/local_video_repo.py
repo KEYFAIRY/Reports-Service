@@ -57,7 +57,7 @@ class LocalVideoRepository(IVideoRepo):
                 middle_timestamp = (start_seconds + end_seconds) / 2
                 
                 # Set video position to the desired timestamp
-                cap.set(cv2.CAP_PROP_POS_MSEC, middle_timestamp * 1000)
+                cap.set(cv2.CAP_PROP_POS_MSEC, start_seconds * 1000)
                 ret, frame = cap.read()
                 
                 if ret:
