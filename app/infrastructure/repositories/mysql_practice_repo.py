@@ -3,6 +3,7 @@ from typing import Optional
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import select, update
 from sqlalchemy.orm import joinedload
+from datetime import datetime
 
 from app.core.exceptions import DatabaseConnectionException
 from app.domain.entities.practice import Practice
@@ -89,17 +90,21 @@ class MySQLPracticeRepository(IPracticeRepo):
             raise DatabaseConnectionException(f"Error updating practice: {str(e)}")
 
     def _model_to_entity(self, model: PracticeModel) -> Practice:
+        """Map PracticeModel -> Practice entity, splitting datetime into date + time."""
+        practice_date = model.practice_datetime.date() if model.practice_datetime else None
+        practice_time = model.practice_datetime.time() if model.practice_datetime else None
+
         return Practice(
             id=model.id,
-            date=model.date,
-            time=model.time,
-            num_postural_errors=model.num_postural_errors or 0,
-            num_musical_errors=model.num_musical_errors or 0,
-            duration=model.duration or 0,
+            date=practice_date.isoformat() if practice_date else None,  # string "YYYY-MM-DD"
+            time=practice_time.strftime("%H:%M:%S") if practice_time else None,  # string "HH:MM:SS"
+            num_postural_errors=int(model.num_postural_errors) if model.num_postural_errors else 0,
+            num_musical_errors=int(model.num_musical_errors) if model.num_musical_errors else 0,
+            duration=int(model.duration) if model.duration else 0,
             id_student=model.id_student,
             student_name=model.student.name if model.student else None,
-            scale="",        # no se consulta, ya viene en el DTO
-            scale_type="",   # no se consulta, ya viene en el DTO
-            reps=0,          # no se consulta, ya viene del DTO
+            scale="",        # DTO
+            scale_type="",   # DTO
+            reps=0,          # DTO
             bpm=model.bpm,
         )

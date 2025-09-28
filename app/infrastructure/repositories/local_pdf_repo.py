@@ -106,7 +106,7 @@ class LocalPDFRepository(IPDFRepo):
                         img
                     ])
                 
-                postural_table = Table(postural_table_data, colWidths=[60, 60, 50, 180, 160])
+                postural_table = Table(postural_table_data, colWidths=[60, 60, 50, 180, 160], repeatRows=1)
                 postural_table.setStyle(TableStyle([
                     ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
                     ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
@@ -134,7 +134,7 @@ class LocalPDFRepository(IPDFRepo):
                         error.note_correct
                     ])
                 
-                musical_table = Table(musical_table_data, colWidths=[120, 150, 120])
+                musical_table = Table(musical_table_data, colWidths=[120, 150, 120], repeatRows=1)
                 musical_table.setStyle(TableStyle([
                     ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
                     ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
