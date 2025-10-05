@@ -62,7 +62,7 @@ class LocalPDFRepository(IPDFRepo):
             
             # Practice information
             info_text = f"""
-            Estudiante: {practice.student_name}<br/>
+            Estudiante: {practice.student_name.upper()}<br/>
             Fecha de la práctica: {practice.date}<br/>
             Hora de la práctica: {practice.time}<br/>
             Duración del video: {practice.duration}<br/>
