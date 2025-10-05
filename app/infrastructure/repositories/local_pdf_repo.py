@@ -2,7 +2,6 @@ import os
 import aiofiles
 import logging
 import tempfile
-import shutil
 from typing import List, Dict
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
@@ -63,13 +62,15 @@ class LocalPDFRepository(IPDFRepo):
             
             # Practice information
             info_text = f"""
-            Fecha de la practica: {practice.date}<br/>
+            Estudiante: {practice.student_name}<br/>
+            Fecha de la práctica: {practice.date}<br/>
             Hora de la práctica: {practice.time}<br/>
             Duración del video: {practice.duration}<br/>
             BPM: {practice.bpm}<br/>
-            Repeticiones: {practice.reps}<br/>
-            Numero de errores posturales: {len(postural_errors)}<br/>
-            Numero de errores Musicales: {len(musical_errors)}
+            Octavas: {practice.octaves}<br/>
+            Figura: {practice.figure}<br/>
+            Número de errores posturales: {len(postural_errors)}<br/>
+            Número de errores Musicales: {len(musical_errors)}
             """
             elements.append(Paragraph(info_text, styles['Normal']))
             elements.append(Spacer(1, 20))
@@ -106,7 +107,7 @@ class LocalPDFRepository(IPDFRepo):
                         img
                     ])
                 
-                postural_table = Table(postural_table_data, colWidths=[60, 60, 50, 180, 160], repeatRows=1)
+                postural_table = Table(postural_table_data, colWidths=[60, 60, 50, 170, 170], repeatRows=1)
                 postural_table.setStyle(TableStyle([
                     ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
                     ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
@@ -125,16 +126,15 @@ class LocalPDFRepository(IPDFRepo):
             elements.append(Spacer(1, 12))
             
             if musical_errors:
-                musical_table_data = [["Momento del error (mm:ss)", "Nota interpretada por el estudiante", "Nota correcta"]]
+                musical_table_data = [["Momento del error (mm:ss)", "Nota que no interpretó"]]
                 
                 for error in musical_errors:
                     musical_table_data.append([
                         error.min_sec,
-                        error.note_played,
-                        error.note_correct
+                        error.missed_note
                     ])
                 
-                musical_table = Table(musical_table_data, colWidths=[120, 150, 120], repeatRows=1)
+                musical_table = Table(musical_table_data, colWidths=[120, 120], repeatRows=1)
                 musical_table.setStyle(TableStyle([
                     ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
                     ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),

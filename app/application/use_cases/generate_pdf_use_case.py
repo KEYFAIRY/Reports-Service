@@ -50,8 +50,9 @@ class GeneratePDFUseCase:
             logger.info(f"Updated practice data with {practice_with_musical_updated.num_musical_errors} musical errors.")
             
             # 3. Generate PDF
-            
-            practice = Practice(
+            if len(postural_errors) > 0 or len(musical_errors) > 0:
+                
+                practice = Practice(
                 id=practice_with_postural_updated.id,
                 date=practice_with_postural_updated.date,
                 time=practice_with_postural_updated.time,
@@ -62,19 +63,23 @@ class GeneratePDFUseCase:
                 student_name=practice_with_postural_updated.student_name,
                 scale=practice_data.scale,
                 scale_type=practice_data.scale_type,
-                reps=practice_data.reps,
                 bpm=practice_data.bpm,
-            )
+                figure=practice_data.figure,
+                octaves=practice_data.octaves
+                )
             
-            logger.info(f"Generating PDF for practice {practice_data.practice_id}")
-            pdf_path = await self.pdf_service.generate_pdf(practice, postural_errors, musical_errors)
-            logger.info(f"PDF generated at path: {pdf_path}")
+                logger.info(f"Generating PDF for practice {practice_data.practice_id}")
+                pdf_path = await self.pdf_service.generate_pdf(practice, postural_errors, musical_errors)
+                logger.info(f"PDF generated at path: {pdf_path}")
+                
+                logger.info(f"Saving PDF path to metadata for practice {practice.id}")
+                await self.metadata_service.save_pdf_path(practice.id_student, practice.id, pdf_path)
+                logger.info(f"PDF path saved successfully for practice {practice.id}")
+                
+                return pdf_path
             
-            logger.info(f"Saving PDF path to metadata for practice {practice.id}")
-            await self.metadata_service.save_pdf_path(practice.id_student, practice.id, pdf_path)
-            logger.info(f"PDF path saved successfully for practice {practice.id}")
+            return ""
             
-            return pdf_path
         else:
             error_msg = f"Audio and video processing not completed for practice ID: {practice_data.practice_id}"
             logger.error(error_msg)

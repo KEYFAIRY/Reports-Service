@@ -10,7 +10,6 @@ from app.domain.services.musical_error_service import MusicalErrorService
 from app.domain.services.pdf_service import PDFService
 from app.domain.services.postural_error_service import PosturalErrorService
 from app.domain.services.practice_service import PracticeService
-from app.domain.services.video_service import VideoService
 from app.infrastructure.kafka.kafka_message import KafkaMessage
 from app.infrastructure.repositories.local_pdf_repo import LocalPDFRepository
 from app.infrastructure.repositories.local_video_repo import LocalVideoRepository
@@ -92,8 +91,9 @@ async def start_kafka_consumer():
                     num_postural_errors=0,  # Placeholder, replace with actual data if available
                     num_musical_errors=0,   # Placeholder, replace with actual data if available
                     duration=kafka_msg.duration,
-                    reps=kafka_msg.reps,
                     bpm=kafka_msg.bpm,
+                    figure=kafka_msg.figure,
+                    octaves=kafka_msg.octaves,
                 )
 
                 # Crear la tarea y guardarla en la lista

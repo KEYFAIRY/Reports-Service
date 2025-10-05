@@ -105,6 +105,7 @@ class MySQLPracticeRepository(IPracticeRepo):
             student_name=model.student.name if model.student else None,
             scale="",        # DTO
             scale_type="",   # DTO
-            reps=0,          # DTO
             bpm=model.bpm,
+            figure=model.figure,
+            octaves=model.octaves
         )

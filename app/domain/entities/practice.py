@@ -13,5 +13,6 @@ class Practice:
     student_name: str
     scale: str
     scale_type: str
-    reps: int
     bpm: int
+    figure: int
+    octaves: int

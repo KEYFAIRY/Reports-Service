@@ -5,6 +5,5 @@ from typing import Optional
 class MusicalError:
     id: int
     min_sec: str
-    note_played: str
-    note_correct: str
+    missed_note: str
     id_practice: int

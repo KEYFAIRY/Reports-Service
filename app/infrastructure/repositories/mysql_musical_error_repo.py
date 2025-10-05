@@ -37,7 +37,6 @@ class MySQLMusicalErrorRepository(IMusicalErrorRepo):
         return MusicalError(
             id=model.id,
             min_sec=model.min_sec,
-            note_played=model.note_played,
-            note_correct=model.note_correct,
+            missed_note=model.missed_note,
             id_practice=model.id_practice
         )
