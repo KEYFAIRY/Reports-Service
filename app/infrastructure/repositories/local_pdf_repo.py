@@ -13,6 +13,7 @@ from app.domain.repositories.i_pdf_repo import IPDFRepo
 from app.domain.entities.practice import Practice
 from app.domain.entities.postural_error import PosturalError
 from app.domain.entities.musical_error import MusicalError
+from app.shared.enums import Figure
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +62,7 @@ class LocalPDFRepository(IPDFRepo):
             elements.append(Spacer(1, 12))
             
             # Practice information
+            figure = Figure.to_str(practice.figure)
             info_text = f"""
             Estudiante: {practice.student_name.upper()}<br/>
             Fecha de la práctica: {practice.date}<br/>
@@ -68,7 +70,7 @@ class LocalPDFRepository(IPDFRepo):
             Duración del video: {practice.duration}<br/>
             BPM: {practice.bpm}<br/>
             Octavas: {practice.octaves}<br/>
-            Figura: {practice.figure}<br/>
+            Figura: {figure}<br/>
             Número de errores posturales: {len(postural_errors)}<br/>
             Número de errores Musicales: {len(musical_errors)}
             """
