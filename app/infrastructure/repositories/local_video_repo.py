@@ -12,7 +12,7 @@ class LocalVideoRepository(IVideoRepo):
     """Concrete implementation of IVideoRepo using local filesystem."""
     
     def __init__(self, base_dir: str | None = None):
-        self.base_dir = base_dir or os.getenv("CONTAINER_VIDEO_PATH", "/app/storage")
+        self.base_dir = base_dir or os.getenv("CONTAINER_PATH", "/app/storage")
 
     async def get_video(self, uid: str, practice_id: int) -> str:
         """Retrieve the video file path for the given practice ID."""

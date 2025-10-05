@@ -21,7 +21,7 @@ class LocalPDFRepository(IPDFRepo):
     """Concrete implementation of IPDFRepo using local file system."""
 
     def __init__(self, base_dir: str | None = None):
-        self.base_dir = base_dir or os.getenv("CONTAINER_VIDEO_PATH", "/app/storage")
+        self.base_dir = base_dir or os.getenv("CONTAINER_PATH", "/app/storage")
         os.makedirs(self.base_dir, exist_ok=True)
 
     def _convert_mmss_to_seconds(self, mmss: str) -> float:
