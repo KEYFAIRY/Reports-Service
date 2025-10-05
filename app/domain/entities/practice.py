@@ -14,5 +14,5 @@ class Practice:
     scale: str
     scale_type: str
     bpm: int
-    figure: int
+    figure: float
     octaves: int
