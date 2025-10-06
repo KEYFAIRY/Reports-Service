@@ -49,6 +49,8 @@ class GeneratePDFUseCase:
             logger.info(f"Updated practice data with {practice_with_postural_updated.num_postural_errors} postural errors.")
             logger.info(f"Updated practice data with {practice_with_musical_updated.num_musical_errors} musical errors.")
             
+            pdf_path: str = "None"
+            
             # 3. Generate PDF
             if len(postural_errors) > 0 or len(musical_errors) > 0:
                 
@@ -72,13 +74,12 @@ class GeneratePDFUseCase:
                 pdf_path = await self.pdf_service.generate_pdf(practice, postural_errors, musical_errors)
                 logger.info(f"PDF generated at path: {pdf_path}")
                 
-                logger.info(f"Saving PDF path to metadata for practice {practice.id}")
-                await self.metadata_service.save_pdf_path(practice.id_student, practice.id, pdf_path)
-                logger.info(f"PDF path saved successfully for practice {practice.id}")
                 
-                return pdf_path
-            
-            return ""
+            logger.info(f"Saving PDF path to metadata for practice {practice_data.practice_id}")
+            await self.metadata_service.save_pdf_path(practice_data.uid, practice_data.practice_id, pdf_path)
+            logger.info(f"PDF path saved successfully for practice {practice_data.practice_id}")
+
+            return pdf_path
             
         else:
             error_msg = f"Audio and video processing not completed for practice ID: {practice_data.practice_id}"
