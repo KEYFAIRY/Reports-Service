@@ -128,15 +128,16 @@ class LocalPDFRepository(IPDFRepo):
             elements.append(Spacer(1, 12))
             
             if musical_errors:
-                musical_table_data = [["Momento del error (mm:ss)", "Nota que no interpretó"]]
+                musical_table_data = [["Momento del error (mm:ss)", "Nota interpretada (incorrecta)", "Nota correcta"]]
                 
                 for error in musical_errors:
                     musical_table_data.append([
                         error.min_sec,
-                        error.missed_note
+                        error.note_played,
+                        error.note_correct
                     ])
                 
-                musical_table = Table(musical_table_data, colWidths=[120, 120], repeatRows=1)
+                musical_table = Table(musical_table_data, colWidths=[160, 160, 160], repeatRows=1)
                 musical_table.setStyle(TableStyle([
                     ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
                     ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
