@@ -86,7 +86,7 @@ class LocalPDFRepository(IPDFRepo):
                 
                 for i, error in enumerate(postural_errors):
                     start_seconds = self._convert_mmss_to_seconds(error.min_sec_init)
-                    end_seconds = self._convert_mmss_to_seconds(str(error.min_sec_end))
+                    end_seconds = self._convert_mmss_to_seconds(error.min_sec_end)
                     duration = end_seconds - start_seconds
                     
                     screenshot_path = screenshots.get(i)

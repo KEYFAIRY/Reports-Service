@@ -32,7 +32,7 @@ class LocalVideoRepository(IVideoRepo):
             return 0.0
 
     async def extract_screenshots_for_errors(self, uid: str, practice_id: int, postural_errors: List[PosturalError]) -> Dict[int, str]:
-        """Extract screenshots for postural errors and return a mapping of error index to screenshot path."""
+        """Extract screenshots for postural errors using specific frame numbers."""
         screenshots = {}
         
         if not postural_errors:
@@ -51,22 +51,20 @@ class LocalVideoRepository(IVideoRepo):
                 return screenshots
             
             for i, error in enumerate(postural_errors):
-                # Parse timestamps and calculate middle point
-                start_seconds = self._parse_timestamp(error.min_sec_init)
-                end_seconds = self._parse_timestamp(error.min_sec_end)
-                middle_timestamp = (start_seconds + end_seconds) / 2
+                # Use the specific frame number from the entity
+                target_frame = error.frame
                 
-                # Set video position to the desired timestamp
-                cap.set(cv2.CAP_PROP_POS_MSEC, middle_timestamp * 1000)
+                # Set video position to the specific frame
+                cap.set(cv2.CAP_PROP_POS_FRAMES, target_frame)
                 ret, frame = cap.read()
                 
                 if ret:
                     screenshot_path = os.path.join(temp_dir, f"error_{practice_id}_{i}.png")
                     cv2.imwrite(screenshot_path, frame)
                     screenshots[i] = screenshot_path
-                    logger.debug(f"Screenshot extracted for error {i} at {middle_timestamp}s")
+                    logger.debug(f"Screenshot extracted for error {i} at frame {target_frame}")
                 else:
-                    logger.warning(f"Could not extract frame at {middle_timestamp}s for error {i}")
+                    logger.warning(f"Could not extract frame {target_frame} for error {i}")
                     screenshots[i] = None
             
             cap.release()
