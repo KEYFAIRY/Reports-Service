@@ -53,13 +53,7 @@ async def start_kafka_consumer():
         group_id=settings.KAFKA_GROUP_ID,
     )
 
-    try:
-        await consumer.start()
-        logger.info("Kafka consumer started")
-    except Exception as e:
-        logger.error(f"Error starting Kafka consumer: {e}", exc_info=True)
-        return
-    
+    await consumer.start()
     tasks = []
     try:
         logger.info("Kafka consumer started")
