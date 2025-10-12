@@ -57,7 +57,7 @@ class LocalPDFRepository(IPDFRepo):
             styles = getSampleStyleSheet()
             
             # Title
-            title = f"Reporte de practica: Escala {practice.scale}, {practice.scale_type}"
+            title = f"Reporte de practica: Escala {practice.scale}"
             elements.append(Paragraph(title, styles['Title']))
             elements.append(Spacer(1, 12))
             

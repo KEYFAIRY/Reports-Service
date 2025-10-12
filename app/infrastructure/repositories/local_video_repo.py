@@ -17,6 +17,21 @@ class LocalVideoRepository(IVideoRepo):
     async def get_video(self, uid: str, practice_id: int) -> str:
         """Retrieve the video file path for the given practice ID."""
         return self.base_dir + f"/{uid}/videos/practice_{practice_id}.mp4"
+    
+    async def delete_video(self, uid: str, practice_id: int) -> bool:
+        """Delete a video file if it exists."""
+        file_path = os.path.join(self.base_dir, uid, "videos", f"practice_{practice_id}.mp4")
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                logger.info(f"Video deleted: {file_path}")
+                return True
+            else:
+                logger.warning(f"Video not found for deletion: {file_path}")
+                return False
+        except Exception as e:
+            logger.error(f"Error deleting video {file_path}: {e}")
+            return False
 
     def _parse_timestamp(self, timestamp: str) -> float:
         """Helper method to parse mm:ss format to seconds."""

@@ -12,3 +12,8 @@ class IVideoRepo(ABC):
     async def extract_screenshots_for_errors(self, uid: str, practice_id: int, postural_errors: List[PosturalError]) -> Dict[int, str]:
         """Extract screenshots for postural errors and return a mapping of error index to screenshot path."""
         pass
+    
+    @abstractmethod
+    async def delete_video(self, uid: str, practice_id: int) -> bool:
+        """Delete a video file if it exists."""
+        pass

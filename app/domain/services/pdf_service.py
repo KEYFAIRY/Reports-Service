@@ -36,6 +36,9 @@ class PDFService:
             )
             logger.debug(f"Screenshot extraction completed for practice_id={practice.id}")
             
+            # Delete video after extracting screenshots to save space
+            await self.video_repo.delete_video(practice.id_student, practice.id)
+            
             # Generate PDF content in thread pool (CPU-intensive with ReportLab)
             logger.debug(f"Starting PDF generation for practice_id={practice.id}")
             pdf_content = await loop.run_in_executor(
