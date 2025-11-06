@@ -27,6 +27,16 @@ class GeneratePDFUseCase:
         
 
     async def execute(self, practice_data: PracticeDataDTO) -> str:
+        if not practice_data.uid:
+            error_msg = "No practice data provided"
+            logger.error(error_msg)
+            raise Exception(error_msg)
+        
+        if not practice_data.practice_id:
+            error_msg = "No practice ID provided"
+            logger.error(error_msg)
+            raise Exception(error_msg)
+        
         # Check if audio and video analysis are done
         processing_done = await self.metadata_service.is_video_and_audio_done(practice_data.uid, practice_data.practice_id)
         logger.info(f"Audio and video processing done: {processing_done}")
