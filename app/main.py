@@ -6,6 +6,7 @@ from app.core.config import settings
 from app.core.logging import configure_logging
 from app.infrastructure.database import mongo_connection, mysql_connection
 from app.infrastructure.kafka.kafka_consumer import start_kafka_consumer
+from app.infrastructure.monitoring import metrics
 
 # Configure logging
 configure_logging()
@@ -23,7 +24,10 @@ async def initialize_databases(retry_delay: int = 5):
         await asyncio.sleep(retry_delay)
 
         attempt += 1
-        
+        # ---- Prometheus ----
+        logger.info("Starting Prometheus metrics server...")
+        metrics.start_metrics_server()
+        logger.info("Prometheus metrics server started")
         # MySQL
         if not mysql_connected:
             try:

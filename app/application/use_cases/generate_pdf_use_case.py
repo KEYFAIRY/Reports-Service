@@ -1,4 +1,5 @@
 import logging
+import time
 from app.application.dto.practice_data_dto import PracticeDataDTO
 from app.domain.entities.practice import Practice
 from app.domain.services.metadata_service import MetadataPracticeService
@@ -7,6 +8,7 @@ from app.domain.services.pdf_service import PDFService
 from app.domain.services.postural_error_service import PosturalErrorService
 from app.domain.services.practice_service import PracticeService
 from app.domain.services.video_service import VideoService
+from app.infrastructure.monitoring import metrics
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +39,7 @@ class GeneratePDFUseCase:
             logger.error(error_msg)
             raise Exception(error_msg)
         
+        start_time = time.time()
         # Check if audio and video analysis are done
         processing_done = await self.metadata_service.is_video_and_audio_done(practice_data.uid, practice_data.practice_id)
         logger.info(f"Audio and video processing done: {processing_done}")
@@ -89,9 +92,15 @@ class GeneratePDFUseCase:
             await self.metadata_service.save_pdf_path(practice_data.uid, practice_data.practice_id, pdf_path)
             logger.info(f"PDF path saved successfully for practice {practice_data.practice_id}")
 
+            end_time = time.time()
+        
+            metrics.report_processing_duration.observe(end_time - start_time)
+
             return pdf_path
             
         else:
             error_msg = f"Audio and video processing not completed for practice ID: {practice_data.practice_id}"
             logger.error(error_msg)
+            end_time = time.time()
+            metrics.report_processing_duration.observe(end_time - start_time)
             raise Exception(error_msg)

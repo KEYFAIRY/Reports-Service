@@ -1,6 +1,7 @@
 import logging
 from app.domain.repositories.i_metadata_repo import IMetadataRepo
 from app.infrastructure.database.mongo_connection import mongo_connection
+from app.infrastructure.monitoring import metrics
 
 logger = logging.getLogger(__name__)
 
@@ -23,17 +24,32 @@ class MongoMetadataRepo(IMetadataRepo):
                 {"$set": {"practices.$.report": pdf_path}}
             )
             if result.modified_count == 1:
+                metrics.db_operations.labels(
+                        operation='Update', 
+                        database='MongoDB',
+                        status = 'success'
+                    ).inc()
                 logger.info(
                     "Updated report for uid=%s, practice=%s", uid, practice_id
                 )
                 return True
 
+            metrics.db_operations.labels(
+                        operation='Update', 
+                        database='MongoDB',
+                        status = 'error'
+                    ).inc()
             logger.warning(
                 "No document updated for uid=%s, practice=%s", uid, practice_id
             )
             return False
 
         except Exception as e:
+            metrics.db_operations.labels(
+                        operation='Update', 
+                        database='MongoDB',
+                        status = 'error'
+                    ).inc()
             logger.exception(
                 "Error updating report for uid=%s, practice=%s",
                 uid,
@@ -58,6 +74,11 @@ class MongoMetadataRepo(IMetadataRepo):
                 },
                 {"practices.$": 1}  # Project only the matching practice
             )
+            metrics.db_operations.labels(
+                        operation='Read', 
+                        database='MongoDB',
+                        status = 'success'
+                    ).inc()
             
             if result and "practices" in result and len(result["practices"]) > 0:
                 practice = result["practices"][0]
@@ -76,6 +97,11 @@ class MongoMetadataRepo(IMetadataRepo):
                 return False
 
         except Exception as e:
+            metrics.db_operations.labels(
+                        operation='Update', 
+                        database='MongoDB',
+                        status = 'error'
+                    ).inc()
             logger.exception(
                 "Error checking video and audio status for uid=%s, practice=%s",
                 uid,

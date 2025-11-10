@@ -17,6 +17,7 @@ from app.infrastructure.repositories.mongo_metadata_repo import MongoMetadataRep
 from app.infrastructure.repositories.mysql_musical_error_repo import MySQLMusicalErrorRepository
 from app.infrastructure.repositories.mysql_postural_error_repo import MySQLPosturalErrorRepository
 from app.infrastructure.repositories.mysql_practice_repo import MySQLPracticeRepository
+from app.infrastructure.monitoring import metrics
 
 logger = logging.getLogger(__name__)
 
@@ -63,14 +64,27 @@ async def start_kafka_consumer():
                 try:
                     pdf = await use_case.execute(dto)
                     logger.info(f"Processed KafkaMessage with PDF in {pdf}")
+                    metrics.kafka_messages_processed.labels(
+                        topic=topic_label, 
+                        status='success'
+                    ).inc()
                     await consumer.commit()
                 except Exception as e:
+                    metrics.kafka_messages_processed.labels(
+                        topic=topic_label, 
+                        status='error'
+                    ).inc()
                     logger.error(f"Error processing message in background: {e}", exc_info=True)
-
+ 
         async for msg in consumer:
             try:
                 decoded = msg.value.decode()
                 logger.info(f"Received raw message: {decoded}")
+
+                topic_label = getattr(msg, 'topic', settings.KAFKA_INPUT_TOPIC)
+                metrics.kafka_messages_polled.labels(
+                    topic=topic_label
+                ).inc()
 
                 data = json.loads(decoded)
                 kafka_msg = KafkaMessage(**data)

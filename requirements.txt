@@ -12,3 +12,4 @@ reportlab
 opencv-python-headless
 moviepy
 Pillow
+prometheus-client==0.21.0

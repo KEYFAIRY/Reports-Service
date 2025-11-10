@@ -7,6 +7,7 @@ from app.domain.repositories.i_postural_error_repo import IPosturalErrorRepo
 from app.infrastructure.database.models.postural_error_model import PosturalErrorModel
 from app.infrastructure.database.mysql_connection import mysql_connection
 from app.core.exceptions import DatabaseConnectionException
+from app.infrastructure.monitoring import metrics
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +17,11 @@ class MySQLPosturalErrorRepository(IPosturalErrorRepo):
     async def create(self, postural_error: PosturalError) -> PosturalError:
         try:
             async with mysql_connection.get_async_session() as session:
+                metrics.db_operations.labels(
+                        operation='Insert', 
+                        database='MySQL',
+                        status = 'success'
+                    ).inc()
                 model = PosturalErrorModel(
                     min_sec_init=postural_error.min_sec_init,
                     min_sec_end=postural_error.min_sec_end,
@@ -33,6 +39,11 @@ class MySQLPosturalErrorRepository(IPosturalErrorRepo):
                 return self._model_to_entity(model)
 
         except IntegrityError as e:
+            metrics.db_operations.labels(
+                        operation='Insert', 
+                        database='MySQL',
+                        status = 'error'
+                    ).inc()
             logger.error(
                 f"Integrity error creating postural error for practice_id={postural_error.id_practice}: {e}",
                 exc_info=True,
@@ -56,6 +67,11 @@ class MySQLPosturalErrorRepository(IPosturalErrorRepo):
     async def get_by_practice(self, id_practice: int) -> List[PosturalError]:
         try:
             async with mysql_connection.get_async_session() as session:
+                metrics.db_operations.labels(
+                        operation='Read', 
+                        database='MySQL',
+                        status = 'success'
+                    ).inc()
                 result = await session.execute(
                     select(PosturalErrorModel).where(PosturalErrorModel.id_practice == id_practice)
                 )
@@ -64,6 +80,11 @@ class MySQLPosturalErrorRepository(IPosturalErrorRepo):
                 return [self._model_to_entity(row) for row in rows]
 
         except SQLAlchemyError as e:
+            metrics.db_operations.labels(
+                        operation='Read', 
+                        database='MySQL',
+                        status = 'error'
+                    ).inc()
             logger.error(
                 f"MySQL error listing postural errors for practice_id={id_practice}: {e}",
                 exc_info=True,

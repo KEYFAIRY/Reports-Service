@@ -1,5 +1,7 @@
 services:
   reports-service:
+    ports:
+        - "8017:8017"
     build:
       context: .
       dockerfile: Dockerfile

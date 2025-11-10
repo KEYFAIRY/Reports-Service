@@ -7,6 +7,7 @@ from app.domain.entities.musical_error import MusicalError
 from app.infrastructure.database.models.musical_error_model import MusicalErrorModel
 from app.infrastructure.database.mysql_connection import mysql_connection
 from app.core.exceptions import DatabaseConnectionException
+from app.infrastructure.monitoring import metrics
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +18,11 @@ class MySQLMusicalErrorRepository(IMusicalErrorRepo):
     async def get_by_practice(self, id_practice: int) -> List[MusicalError]:
         try:
             async with mysql_connection.get_async_session() as session:
+                metrics.db_operations.labels(
+                        operation='Read', 
+                        database='MySQL',
+                        status = 'success'
+                    ).inc()
                 result = await session.execute(
                     select(MusicalErrorModel).where(MusicalErrorModel.id_practice == id_practice)
                 )
@@ -27,6 +33,11 @@ class MySQLMusicalErrorRepository(IMusicalErrorRepo):
                 return [self._model_to_entity(row) for row in rows]
 
         except SQLAlchemyError as e:
+            metrics.db_operations.labels(
+                        operation='Read', 
+                        database='MySQL',
+                        status = 'error'
+                    ).inc()
             logger.error(
                 f"MySQL error listing musical errors for practice_id={id_practice}: {e}",
                 exc_info=True
