@@ -5,7 +5,7 @@ import asyncio
 from app.core.config import settings
 from app.core.logging import configure_logging
 from app.infrastructure.database import mongo_connection, mysql_connection
-from app.infrastructure.kafka.kafka_consumer import start_kafka_consumer
+from app.messages.kafka_consumer import start_kafka_consumer
 from app.infrastructure.monitoring import metrics
 
 # Configure logging

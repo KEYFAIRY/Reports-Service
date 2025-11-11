@@ -10,7 +10,7 @@ from app.domain.services.musical_error_service import MusicalErrorService
 from app.domain.services.pdf_service import PDFService
 from app.domain.services.postural_error_service import PosturalErrorService
 from app.domain.services.practice_service import PracticeService
-from app.infrastructure.kafka.kafka_message import KafkaMessage
+from app.messages.kafka_message import KafkaMessage
 from app.infrastructure.repositories.local_pdf_repo import LocalPDFRepository
 from app.infrastructure.repositories.local_video_repo import LocalVideoRepository
 from app.infrastructure.repositories.mongo_metadata_repo import MongoMetadataRepo
